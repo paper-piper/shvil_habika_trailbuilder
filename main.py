@@ -15,6 +15,20 @@ SEGMENTS = [
         "has_water": False,
         "shade_level": "low",
         "suitable_for_kids": False,
+        "lodging": [
+            {
+                "image": "https://example.com/images/segment-1-camp-a.jpg",
+                "title": "מאהל נחל דרומי",
+                "description": "מתחם קמפינג בסיסי עם צל חלקי, נקודת אש, ושירותים ביולוגיים.",
+                "link": "https://example.com/segment-1-camp-a",
+            },
+            {
+                "image": "https://example.com/images/segment-1-inn.jpg",
+                "title": "אכסניית הרכס",
+                "description": "אכסניה קטנה עם מקלחות חמות וחדרים משותפים.",
+                "link": "https://example.com/segment-1-inn",
+            },
+        ],
     },
     {
         "id": 2,
@@ -23,6 +37,20 @@ SEGMENTS = [
         "has_water": True,
         "shade_level": "medium",
         "suitable_for_kids": True,
+        "lodging": [
+            {
+                "image": "https://example.com/images/segment-2-eco.jpg",
+                "title": "חאן אקולוגי",
+                "description": "חאן משפחתי עם אוהלים קבועים, מטבח משותף ופינות ישיבה.",
+                "link": "https://example.com/segment-2-eco",
+            },
+            {
+                "image": "https://example.com/images/segment-2-bnb.jpg",
+                "title": "צימר בנחל",
+                "description": "צימר כפרי עם מרפסת ונוף לערוץ הנחל.",
+                "link": "https://example.com/segment-2-bnb",
+            },
+        ],
     },
     {
         "id": 3,
@@ -31,6 +59,20 @@ SEGMENTS = [
         "has_water": True,
         "shade_level": "high",
         "suitable_for_kids": True,
+        "lodging": [
+            {
+                "image": "https://example.com/images/segment-3-family.jpg",
+                "title": "חניון לילה משפחתי",
+                "description": "חניון לילה מסודר עם שולחנות פיקניק ונקודות מים.",
+                "link": "https://example.com/segment-3-family",
+            },
+            {
+                "image": "https://example.com/images/segment-3-hostel.jpg",
+                "title": "הוסטל היער",
+                "description": "הוסטל ידידותי למשפחות עם ארוחת בוקר קלה.",
+                "link": "https://example.com/segment-3-hostel",
+            },
+        ],
     },
     {
         "id": 4,
@@ -39,6 +81,20 @@ SEGMENTS = [
         "has_water": False,
         "shade_level": "low",
         "suitable_for_kids": True,
+        "lodging": [
+            {
+                "image": "https://example.com/images/segment-4-camp.jpg",
+                "title": "קמפינג מצוקי",
+                "description": "חניון לילה פתוח עם נקודת תצפית לשקיעה.",
+                "link": "https://example.com/segment-4-camp",
+            },
+            {
+                "image": "https://example.com/images/segment-4-guesthouse.jpg",
+                "title": "בית הארחה המדבר",
+                "description": "בית הארחה קטן עם חדרים פרטיים ומטבחון משותף.",
+                "link": "https://example.com/segment-4-guesthouse",
+            },
+        ],
     },
 ]
 
@@ -52,9 +108,17 @@ class RouteRequest(BaseModel):
     difficulty: str = Field(..., pattern="^(easy|moderate|hard)$")
 
 
+class LodgingCard(BaseModel):
+    image: str
+    title: str
+    description: str
+    link: str
+
+
 class SegmentRecommendation(BaseModel):
     segment: int
     reason: str
+    lodging: List[LodgingCard]
 
 
 class RouteResponse(BaseModel):
@@ -221,6 +285,7 @@ def build_route(request: RouteRequest) -> RouteResponse:
         SegmentRecommendation(
             segment=segment["id"],
             reason=build_reason(segment, request),
+            lodging=segment["lodging"],
         )
         for segment in top_segments
     ]
